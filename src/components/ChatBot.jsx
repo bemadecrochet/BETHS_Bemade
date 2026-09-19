@@ -26,7 +26,7 @@ export default function ChatBot() {
       setShowTip(true)
       setTimeout(() => setShowTip(false), 3500)
     }
-    const first = setTimeout(cycle, 4500) // offset from the WhatsApp nudge so they don't overlap
+    const first = setTimeout(cycle, 5000) // staggered from the WhatsApp nudge
     const interval = setInterval(cycle, 9000)
     return () => {
       clearTimeout(first)
@@ -107,20 +107,20 @@ export default function ChatBot() {
       )}
 
       <div
-        className="fixed right-5 z-40"
+        className="fixed right-5 z-40 flex items-center"
         style={{ bottom: 'calc(10.5rem + env(safe-area-inset-bottom))' }}
       >
         <AnimatePresence>
           {showTip && !open && (
             <motion.div
-              initial={{ opacity: 0, y: 6, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 6, scale: 0.9 }}
+              initial={{ opacity: 0, x: 8, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 8, scale: 0.9 }}
               transition={{ duration: 0.25 }}
-              className="absolute bottom-full right-0 mb-3 w-56 rounded-xl bg-ink px-4 py-2 font-body text-sm text-cream shadow-lg"
+              className="absolute right-full top-1/2 mr-3 w-52 -translate-y-1/2 rounded-xl bg-ink px-4 py-2 font-body text-sm text-cream shadow-lg"
             >
               Ask me anything about Bemade Crotchets
-              <span className="absolute -bottom-1 right-5 h-2 w-2 rotate-45 bg-ink" />
+              <span className="absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-ink" />
             </motion.div>
           )}
         </AnimatePresence>
