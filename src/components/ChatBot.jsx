@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageSquare, X, Send } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false)
@@ -8,11 +9,30 @@ export default function ChatBot() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showTip, setShowTip] = useState(false)
   const scrollRef = useRef(null)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, open])
+
+  // periodic nudge bubble — stops once the chat has been opened
+  useEffect(() => {
+    if (open) {
+      setShowTip(false)
+      return
+    }
+    const cycle = () => {
+      setShowTip(true)
+      setTimeout(() => setShowTip(false), 3500)
+    }
+    const first = setTimeout(cycle, 4500) // offset from the WhatsApp nudge so they don't overlap
+    const interval = setInterval(cycle, 9000)
+    return () => {
+      clearTimeout(first)
+      clearInterval(interval)
+    }
+  }, [open])
 
   async function sendMessage(e) {
     e.preventDefault()
@@ -42,7 +62,10 @@ export default function ChatBot() {
   return (
     <>
       {open && (
-        <div className="fixed bottom-40 right-5 z-40 flex h-[420px] w-[320px] flex-col overflow-hidden rounded-2xl bg-cream shadow-2xl ring-1 ring-ink/10 md:bottom-24">
+        <div
+          className="fixed right-5 z-40 flex h-[420px] w-[320px] flex-col overflow-hidden rounded-2xl bg-cream shadow-2xl ring-1 ring-ink/10"
+          style={{ bottom: 'calc(13.5rem + env(safe-area-inset-bottom))' }}
+        >
           <div className="flex items-center justify-between bg-ink px-4 py-3">
             <span className="font-display text-cream">Ask us anything</span>
             <button onClick={() => setOpen(false)} aria-label="Close chat" className="text-cream/80 hover:text-cream">
@@ -83,13 +106,33 @@ export default function ChatBot() {
         </div>
       )}
 
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Close chat' : 'Open chat'}
-        className="fixed bottom-24 right-24 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream shadow-lg transition-transform hover:-translate-y-0.5 hover:shadow-xl md:bottom-8 md:right-24"
+      <div
+        className="fixed right-5 z-40"
+        style={{ bottom: 'calc(10.5rem + env(safe-area-inset-bottom))' }}
       >
-        <MessageSquare size={24} />
-      </button>
+        <AnimatePresence>
+          {showTip && !open && (
+            <motion.div
+              initial={{ opacity: 0, y: 6, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.9 }}
+              transition={{ duration: 0.25 }}
+              className="absolute bottom-full right-0 mb-3 w-56 rounded-xl bg-ink px-4 py-2 font-body text-sm text-cream shadow-lg"
+            >
+              Ask me anything about Bemade Crotchets
+              <span className="absolute -bottom-1 right-5 h-2 w-2 rotate-45 bg-ink" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? 'Close chat' : 'Open chat'}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream shadow-lg transition-transform hover:-translate-y-0.5 hover:shadow-xl"
+        >
+          {open ? <X size={22} /> : <MessageSquare size={22} />}
+        </button>
+      </div>
     </>
   )
 }
