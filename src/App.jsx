@@ -8,6 +8,7 @@ import Process from './components/Process'
 import Testimonials from './components/Testimonials'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import WhatsAppButton from './components/WhatsAppButton'
 
 function App() {
   const [activeTab, setActiveTab] = useState('home')
@@ -38,7 +39,7 @@ function App() {
           </>
         )}
       </main>
-
+             <WhatsAppButton />
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       <Footer />
     </div>
