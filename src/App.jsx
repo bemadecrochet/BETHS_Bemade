@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { CartProvider } from './context/CartContext'
 import Nav from './components/Nav'
 import TabBar from './components/TabBar'
 import Hero from './components/Hero'
+import HomeProducts from './components/HomeProducts'
 import Story from './components/Story'
 import Gallery from './components/Gallery'
 import Process from './components/Process'
@@ -10,6 +12,7 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import ChatBot from './components/ChatBot'
+import CartDrawer from './components/CartDrawer'
 
 function App() {
   const [activeTab, setActiveTab] = useState('home')
@@ -18,34 +21,41 @@ function App() {
   const goToContact = () => setActiveTab('contact')
 
   return (
-    <div className="relative">
-      <Nav onTabChange={setActiveTab} />
+    <CartProvider>
+      <div className="relative">
+        <Nav onTabChange={setActiveTab} />
 
-      <main className="relative pb-24 pt-28">
-        {activeTab === 'home' && <Hero onExplore={goToShop} onCommission={goToContact} />}
+        <main className="relative pb-24 pt-28">
+          {activeTab === 'home' && (
+            <>
+              <Hero onExplore={goToShop} onCommission={goToContact} />
+              <HomeProducts onViewAll={goToShop} />
+            </>
+          )}
 
-        {activeTab === 'shop' && <Gallery onCommission={goToContact} />}
+          {activeTab === 'shop' && <Gallery />}
 
-        {activeTab === 'about' && (
-          <>
-            <Story />
-            <Process />
-          </>
-        )}
+          {activeTab === 'about' && (
+            <>
+              <Story />
+              <Process />
+            </>
+          )}
 
-        {activeTab === 'contact' && (
-          <>
-            <Testimonials />
-            <Contact />
-          </>
-        )}
-      </main>
-            <WhatsAppButton />
-      <ChatBot />
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
-      <Footer />
-    </div>
+          {activeTab === 'contact' && (
+            <>
+              <Testimonials />
+              <Contact />
+            </>
+          )}
+        </main>
+
+        <WhatsAppButton />
+        <ChatBot />
+        <CartDrawer />
+        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+        <Footer />
+      </div>
+    </CartProvider>
   )
 }
-
-export default App
