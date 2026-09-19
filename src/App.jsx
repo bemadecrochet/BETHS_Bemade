@@ -9,6 +9,7 @@ import Testimonials from './components/Testimonials'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
+import ChatBot from './components/ChatBot'
 
 function App() {
   const [activeTab, setActiveTab] = useState('home')
@@ -39,7 +40,8 @@ function App() {
           </>
         )}
       </main>
-             <WhatsAppButton />
+            <WhatsAppButton />
+      <ChatBot />
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       <Footer />
     </div>
