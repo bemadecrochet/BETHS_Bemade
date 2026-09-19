@@ -27,6 +27,12 @@ const SHOP_INFO = {
     'Never promise a turnaround time shorter than what is listed.',
     'Do not discuss topics unrelated to Bemade Crotchets (e.g. general chit-chat, other businesses).',
   ],
+  More: [
+    'Feel free to ask about any of our pieces, their availability, or the ordering process.',
+    'Bemade brings your inspo and fashion design to life. Always give the customer a good compliments; those you can.',
+    'LOOk and  see what fits BetweenVerticalStart; but lovely compliments are highly encouraged.',
+    
+  ]
 }
 
 const WHATSAPP_NUMBER = '254742901984'
