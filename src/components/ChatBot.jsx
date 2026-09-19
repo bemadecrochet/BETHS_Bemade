@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { MessageSquare, X, Send } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+const SEEN_KEY = 'bb_chat_tip_seen'
+
 export default function ChatBot() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([
@@ -16,23 +18,27 @@ export default function ChatBot() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, open])
 
-  // periodic nudge bubble — stops once the chat has been opened
+  // Show the explainer bubble once ever, on a visitor's first visit only —
+  // staggered a little later than the WhatsApp one so they don't both land at once.
   useEffect(() => {
-    if (open) {
+    if (typeof window === 'undefined') return
+    if (localStorage.getItem(SEEN_KEY)) return
+    const showTimer = setTimeout(() => setShowTip(true), 5000)
+    const hideTimer = setTimeout(() => {
       setShowTip(false)
-      return
-    }
-    const cycle = () => {
-      setShowTip(true)
-      setTimeout(() => setShowTip(false), 3500)
-    }
-    const first = setTimeout(cycle, 5000) // staggered from the WhatsApp nudge
-    const interval = setInterval(cycle, 9000)
+      localStorage.setItem(SEEN_KEY, 'true')
+    }, 9500)
     return () => {
-      clearTimeout(first)
-      clearInterval(interval)
+      clearTimeout(showTimer)
+      clearTimeout(hideTimer)
     }
-  }, [open])
+  }, [])
+
+  function toggleOpen() {
+    setShowTip(false)
+    localStorage.setItem(SEEN_KEY, 'true')
+    setOpen((v) => !v)
+  }
 
   async function sendMessage(e) {
     e.preventDefault()
@@ -126,11 +132,20 @@ export default function ChatBot() {
         </AnimatePresence>
 
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={toggleOpen}
           aria-label={open ? 'Close chat' : 'Open chat'}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream shadow-lg transition-transform hover:-translate-y-0.5 hover:shadow-xl"
+          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-ink text-cream shadow-lg transition-transform hover:-translate-y-0.5 hover:shadow-xl"
         >
-          {open ? <X size={22} /> : <MessageSquare size={22} />}
+          {/* ambient pulsing glow — stays within the button's own footprint */}
+          {!open && (
+            <motion.span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full bg-ink"
+              animate={{ scale: [1, 1.55, 1], opacity: [0.45, 0, 0.45] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            />
+          )}
+          <span className="relative">{open ? <X size={22} /> : <MessageSquare size={22} />}</span>
         </button>
       </div>
     </>
