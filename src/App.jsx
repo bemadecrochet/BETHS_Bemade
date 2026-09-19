@@ -14,7 +14,7 @@ import WhatsAppButton from './components/WhatsAppButton'
 import ChatBot from './components/ChatBot'
 import CartDrawer from './components/CartDrawer'
 
-function App() {
+export default function App() {
   const [activeTab, setActiveTab] = useState('home')
 
   const goToShop = () => setActiveTab('shop')
