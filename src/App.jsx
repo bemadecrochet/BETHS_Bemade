@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Nav from './components/Nav'
+import TabBar from './components/TabBar'
 import Hero from './components/Hero'
 import Story from './components/Story'
 import Gallery from './components/Gallery'
@@ -16,9 +17,9 @@ function App() {
 
   return (
     <div className="relative">
-      <Nav activeTab={activeTab} onTabChange={setActiveTab} />
+      <Nav onTabChange={setActiveTab} />
 
-      <main className="relative pt-28">
+      <main className="relative pb-24 pt-28">
         {activeTab === 'home' && <Hero onExplore={goToShop} onCommission={goToContact} />}
 
         {activeTab === 'shop' && <Gallery onCommission={goToContact} />}
@@ -38,6 +39,7 @@ function App() {
         )}
       </main>
 
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       <Footer />
     </div>
   )
